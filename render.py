@@ -14,26 +14,26 @@ class Grapher(object):
 		self.screen = screen
 		self.name = name
 		self.range = float(1 << 13)
-		self.xoff = 40
+		self.xoff = 50
 		self.y = i * gheight
 		self.buffer = []
 		font = pygame.font.Font(None, 24)
-		self.text = font.render(self.name, 1, (255, 0, 0))
+		self.text = font.render(self.name, 1, (200, 200, 0))
 		self.textpos = self.text.get_rect()
 		self.textpos.centery = self.y + hgheight
 	
 	def update(self, packet):
-		if len(self.buffer) == 800 - self.xoff:
+		if len(self.buffer) == 512 - self.xoff:
 			self.buffer = self.buffer[1:]
 		self.buffer.append(getattr(packet, self.name))
 	
 	def calcY(self, val):
-		return int(val / self.range * gheight)
+		return int((val / self.range * gheight) * .45)
 	
 	def draw(self):
 		if len(self.buffer) == 0:
 			return
-		pos = self.xoff, self.calcY(self.buffer[0][0]) + self.y
+		pos = self.xoff, self.calcY(self.buffer[0][0]) + self.y + 1
 		for i, (x, strength) in enumerate(self.buffer):
 			y = self.calcY(x) + self.y
 			if strength == 0:
@@ -48,17 +48,18 @@ class Grapher(object):
 				color = (0, 255, 0)
 			else:
 				color = (255, 255, 255)
-			pygame.draw.line(self.screen, color, pos, (self.xoff + i, y))
-			pos = (self.xoff+i, y)
+			pygame.draw.line(self.screen, color, pos, (self.xoff + i*2, y))
+			pos = (self.xoff + i*2, y)
+		pygame.draw.line(self.screen, (100, 100, 100), (0, self.y), (1024, self.y))
 		self.screen.blit(self.text, self.textpos)
 
 def main(debug=False):
 	global gheight
 	
 	pygame.init()
-	screen = pygame.display.set_mode((800, 600))
+	screen = pygame.display.set_mode((1024, 768))
 	
-	curX, curY = 400, 300
+	curX, curY = 512, 384
 	
 	graphers = []
 	for name in 'AF3 F7 F3 FC5 T7 P7 O1 O2 P8 T8 FC6 F4 F8 AF4'.split(' '):
@@ -76,8 +77,8 @@ def main(debug=False):
 				curX -= packet.gyroX - 1
 			if abs(packet.gyroY) > 1:
 				curY += packet.gyroY
-			curX = max(0, min(curX, 800))
-			curY = max(0, min(curY, 600))
+			curX = max(0, min(curX, 1024))
+			curY = max(0, min(curY, 768))
 			map(lambda x: x.update(packet), graphers)
 		
 		if updated:
@@ -98,7 +99,7 @@ try:
 
 	emotiv = Emotiv()
 
-	gheight = 600 / 14
+	gheight = 768 / 14
 	hgheight = gheight >> 1
 	
 	main(*sys.argv[1:])
