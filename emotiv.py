@@ -13,8 +13,12 @@ import struct
 
 from threading import Thread
 
-consumer_key = '\x31\x00\x35\x54\x38\x10\x37\x42\x31\x00\x35\x48\x38\x00\x37\x50'
-research_key = '\x31\x00\x39\x54\x38\x10\x37\x42\x31\x00\x39\x48\x38\x00\x37\x50'
+#research_key = '\x31\x00\x35\x54\x38\x10\x37\x42\x31\x00\x35\x48\x38\x00\x37\x50'
+#consumer_key = '\x31\x00\x39\x54\x38\x10\x37\x42\x31\x00\x39\x48\x38\x00\x37\x50'
+
+#Actual Key of our hardware:
+consumer_key = '\x31\x00\x35\x48\x31\x00\x35\x54\x38\x10\x37\x42\x38\x00\x37\x50'
+
 
 sensorBits = {
 	'F3': [10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7], 
@@ -45,6 +49,8 @@ class EmotivPacket(object):
 			level = 0
 			for i in range(13, -1, -1):
 				level <<= 1
+				#b is byte number
+				#o is the first 3 bits of bits[i]
 				b, o = (bits[i] / 8) + 1, bits[i] % 8
 				level |= (ord(data[b]) >> o) & 1
 			strength = 4#(ord(data[j]) >> 3) & 1
@@ -58,7 +64,7 @@ class EmotivPacket(object):
 			)
 
 class Emotiv(object):
-	def __init__(self, headsetId=0, research_headset = True):
+	def __init__(self, headsetId=0, research_headset = False):
 		
 		if research_headset:
 			self.rijn = rijndael(research_key, 16)
