@@ -39,10 +39,13 @@ sensorBits = {
 
 class EmotivPacket(object):
 	def __init__(self, data):
+		self.data = data
 		self.counter = ord(data[0])
 		self.sync = self.counter == 0xe9
 		self.gyroX = ord(data[29]) - 102
 		self.gyroY = ord(data[30]) - 104
+		self.bytes = int("".join(map(str,map(ord, data))));
+		
 		#assert ord(data[15]) == 0
 		
 		for name, bits in sensorBits.items():

@@ -21,20 +21,7 @@ def char_to_bin(char):
 	binary = "".join(bin)	
 	return binary.zfill(8)
 
-def countZero(data, counts, first = False):
-	index = 0
-	while(data > 0):
-		if (data & 1) == 1:
-			if first:
-				counts.append(1)
-			else:
-				counts[index] += 1
-		elif first:
-				counts.append(0)
-		index += 1
-		data = data >> 1
-
-discoveredBytes = [[0]]
+discoveredBytes = [[0], [29], [30]]
 try:
 	f = open('output.txt', 'w')
 	while True:
@@ -43,8 +30,8 @@ try:
 			f.write(printString[0:discoveredBytes[0][0] * 2])
 			print   printString[0:discoveredBytes[0][0] * 2],
 			for i in range(0, len(discoveredBytes)):
-				f.write(printString[discoveredBytes[i][0] * 2: discoveredBytes[i][-1] * 2 + 2] + " ")
-				print   printString[discoveredBytes[i][0] * 2: discoveredBytes[i][-1] * 2 + 2],
+				f.write("." + printString[discoveredBytes[i][0] * 2: discoveredBytes[i][-1] * 2 + 2] + " ")
+				print   "." + printString[discoveredBytes[i][0] * 2: discoveredBytes[i][-1] * 2 + 2],
 				if i < len(discoveredBytes) - 1:
 					f.write(printString[discoveredBytes[i][-1] * 2 + 2: discoveredBytes[i + 1][-1] * 2] + " ")
 					print   printString[discoveredBytes[i][-1] * 2 + 2: discoveredBytes[i + 1][-1] * 2],
